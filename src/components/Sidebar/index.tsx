@@ -1,68 +1,38 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Menu } from '@/components/Menu';
 import { Contact } from '@/data/contacts';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation'
 import Link from 'next/link';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { CardHeader } from '@/components/ui/card';
-
-import { Plus } from 'lucide-react';
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   contacts: Contact[];
 }
 
 export function Sidebar({ className, contacts }: SidebarProps) {
-  const router = useRouter();
+  const pathname = usePathname();
+  const [isOnTheChatPage, setIsOnTheChatPage] = React.useState(pathname.startsWith('/chats/'));
+  // const [width, setWidth] = React.useState(0);
+
+  React.useEffect(() => {
+    setIsOnTheChatPage(pathname.startsWith('/chats/'));
+  }, [pathname]);
+
+  // React.useEffect(() => {
+  //   const dimensions = useWindowDimensions();
+  // }, []);
 
   return (
-    <div className={cn(className, 'h-full')}>
+    <div className={cn(className, 'h-full', { hidden: isOnTheChatPage && window.innerWidth <= 768 })}>
       <Menu />
-
-      <div className="space-y-2 py-2 h-[calc(100vh-6.6rem)] w-full shrink-0 md:sticky md:block">
-        {/* <div className="px-4 flex flex-row items-center">
-          <Input placeholder="Filtrar chats..." className='mr-3' />
-
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="ml-auto rounded-full"
-                  onClick={() => setOpen(true)}
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="sr-only">New message</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent sideOffset={10}>New message</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div> */}
-
-        <div className="flex items-center justify-center">
-          <div className="flex items-center space-x-4">
-            <Input placeholder="Filtrar chats..." />
-          </div>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" variant="outline" className="ml-4 rounded-full" onClick={() => setOpen(true)}>
-                  <Plus className="h-4 w-4" />
-                  <span className="sr-only">New message</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent sideOffset={10}>New message</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+      <div className="space-y-2 py-2 h-[calc(100vh-6.6rem)] w-full shrink-0 md:sticky md:block ">
+        <div className="flex items-center px-3 w-full">
+          <Input placeholder="Filtrar chats..." />
         </div>
 
         <ScrollArea className="h-full !mt-2 !block">
