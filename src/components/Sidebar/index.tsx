@@ -7,7 +7,7 @@ import { Contact } from '@/data/contacts';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import React from 'react';
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -17,18 +17,25 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Sidebar({ className, contacts }: SidebarProps) {
   const pathname = usePathname();
   const [isOnTheChatPage, setIsOnTheChatPage] = React.useState(pathname.startsWith('/chats/'));
-  // const [width, setWidth] = React.useState(0);
+  const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    setIsOnTheChatPage(pathname.startsWith('/chats/'));
+    const handleResize = () => {
+      setIsOnTheChatPage(pathname.startsWith('/chats/'));
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [pathname]);
 
-  // React.useEffect(() => {
-  //   const dimensions = useWindowDimensions();
-  // }, []);
-
   return (
-    <div className={cn(className, 'h-full', { hidden: isOnTheChatPage && window.innerWidth <= 768 })}>
+    <div className={cn(className, 'h-full', { hidden: isOnTheChatPage && isMobile })}>
       <Menu />
       <div className="space-y-2 py-2 h-[calc(100vh-6.6rem)] w-full shrink-0 md:sticky md:block ">
         <div className="flex items-center px-3 w-full">
