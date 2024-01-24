@@ -24,6 +24,7 @@ import { Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Contact } from '@/data/contacts';
+import Link from 'next/link';
 
 const users = [
   {
@@ -81,17 +82,24 @@ export function Menu() {
             <MenubarSeparator />
 
             <MenubarShortcut />
-            <MenubarItem>Sair</MenubarItem>
+            <Link href="/login">
+              <MenubarItem>Sair</MenubarItem>
+            </Link>
           </MenubarContent>
         </MenubarMenu>
 
         <TooltipProvider delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="icon" variant="outline" className="rounded-full !-ml-6" onClick={() => {
-                setOpen(true);
-                setSelectedUsers(undefined);
-              }}>
+              <Button
+                size="icon"
+                variant="outline"
+                className="rounded-full !-ml-6"
+                onClick={() => {
+                  setOpen(true);
+                  setSelectedUsers(undefined);
+                }}
+              >
                 <Plus className="h-4 w-4" />
                 <span className="sr-only">Nova mensagem</span>
               </Button>
@@ -142,11 +150,10 @@ export function Menu() {
           <DialogFooter className="flex items-center border-t p-4 sm:justify-between">
             {!!selectedUser ? (
               <div className="flex -space-x-2 overflow-hidden">
-                  <Avatar key={selectedUser.email} className="inline-block border-2 border-background">
-                    <AvatarImage src={selectedUser.avatar} />
-                    <AvatarFallback>{selectedUser.name[0]}</AvatarFallback>
-                  </Avatar>
-                
+                <Avatar key={selectedUser.email} className="inline-block border-2 border-background">
+                  <AvatarImage src={selectedUser.avatar} />
+                  <AvatarFallback>{selectedUser.name[0]}</AvatarFallback>
+                </Avatar>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">Selecione um contato para iniciar uma conversa</p>
