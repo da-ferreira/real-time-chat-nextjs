@@ -11,6 +11,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Link from 'next/link';
+import { AuthContext } from '@/contexts/AuthContext';
 
 export function CardsChat() {
   const [messages, setMessages] = React.useState([
@@ -114,6 +115,7 @@ export function CardsChat() {
   const [input, setInput] = React.useState('');
   const inputLength = input.trim().length;
   const [isMobile, setIsMobile] = React.useState(false);
+  const { setCurrentChat } = React.useContext(AuthContext);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -135,9 +137,9 @@ export function CardsChat() {
         <CardHeader className="flex flex-row items-center">
           <div className="flex items-center space-x-4">
             {isMobile && (
-              <Link href="/">
+              <button onClick={() => setCurrentChat(null)} >
                 <ChevronLeft className="h-6 w-6" />
-              </Link>
+              </button>
             )}
 
             <Avatar>

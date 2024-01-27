@@ -13,7 +13,7 @@ export default function ChatPage() {
         <p className="text-4xl font-semibold text-gray-600">Chat with {params.username}</p>
         <Link href="/">back to home</Link>
       </div> */}
-      <CardsChat />
+      {/* <CardsChat /> */}
     </div>
   );
 }
