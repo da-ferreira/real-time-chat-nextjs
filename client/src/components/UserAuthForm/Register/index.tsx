@@ -7,11 +7,16 @@ import { Icons } from '@/components/Icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { registerUser } from '@/models/userModel';
+import { UserCreateResponse } from '@/@types/responses';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const router = useRouter();
 
   const name = React.useRef<HTMLInputElement>(null);
   const email = React.useRef<HTMLInputElement>(null);
@@ -21,9 +26,23 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     event.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+    const response: UserCreateResponse = await registerUser({
+      name: name.current?.value,
+      email: email.current?.value,
+      password: password.current?.value,
+    });
+
+    setIsLoading(false);
+
+    if (response.message === 'Esse email já está em uso') {
+      toast.error('Esse email já está em uso');
+    } else if (response.message === 'Erro ao criar usuário') {
+      toast.error('Erro ao criar usuário');
+    } else if (response.message === 'Usuário criado com sucesso') {
+      toast.success('Usuário criado com sucesso');
+
+      router.push('/login');
+    }
   }
 
   return (

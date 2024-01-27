@@ -18,13 +18,13 @@ export default {
       const exists = await userModel.findByField('email', email);
 
       if (exists) {
-        return res.status(400).json({ message: 'Usuário já existe' });
+        return res.status(400).json({ message: 'Esse email já está em uso' });
       }
 
       const user = await userModel.create(name, email, password);
       const token = authToken.generateToken(user.id);
 
-      return res.status(201).json({ token, user: { name, email } });
+      return res.status(201).json({ token, user: { name, email }, message: 'Usuário criado com sucesso' });
     } catch (error) {
       return res.status(500).json({ message: 'Não foi possível criar o usuário' });
     }

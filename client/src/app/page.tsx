@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthContext } from '@/contexts/AuthContext';
+import Content from '@/components/Content';
 import { useContext, useEffect, useState } from 'react';
 import { CardsChat } from '@/components/CardsChat';
 import { cn } from '@/lib/utils';
@@ -39,12 +40,16 @@ export default function Home() {
   }, [setCurrentChat]);
 
   return (
-    <div className="h-full flex items-center justify-center">
-      {currentChat ? (
-        <CardsChat />
-      ) : (
-        <p className={cn('text-4xl font-semibold text-gray-600', { hidden: isMobile })}>Inicie uma conversa</p>
-      )}
-    </div>
+    <Content>
+      <div className="lg:block h-full">
+        <div className="h-full flex items-center justify-center">
+          {currentChat ? (
+            <CardsChat />
+          ) : (
+            <p className={cn('text-4xl font-semibold text-gray-600', { hidden: isMobile })}>Inicie uma conversa</p>
+          )}
+        </div>
+      </div>
+    </Content>
   );
 }
