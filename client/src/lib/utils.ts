@@ -1,16 +1,13 @@
-'use client';
 
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+
+import { getSessionData } from '@/actions';
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function isLogged() {
-  if (typeof window !== 'undefined') {
-    return !!localStorage.getItem('user')
-  }
-
-  return false
+  return !!getSessionData();
 }

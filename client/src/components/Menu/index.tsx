@@ -24,7 +24,8 @@ import { Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Contact } from '@/data/contacts';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { removeSessionData } from '@/actions';
 
 const users = [
   {
@@ -57,6 +58,13 @@ const users = [
 export function Menu() {
   const [open, setOpen] = React.useState(false);
   const [selectedUser, setSelectedUsers] = React.useState<Contact>();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    removeSessionData().then(() => {
+      router.push('/login');
+    });
+  };
 
   return (
     <>
@@ -82,9 +90,9 @@ export function Menu() {
             <MenubarSeparator />
 
             <MenubarShortcut />
-            <Link href="/login">
+            <button onClick={handleLogout} className="w-full text-left cursor-pointer">
               <MenubarItem>Sair</MenubarItem>
-            </Link>
+            </button>
           </MenubarContent>
         </MenubarMenu>
 

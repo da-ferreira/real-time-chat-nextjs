@@ -23,5 +23,8 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "prisma": "^5.8.1"
+  },
+  "engines": {
+    "node": ">18.17.0"
   }
 }

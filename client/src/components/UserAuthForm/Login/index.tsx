@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { loginUser } from '@/models/userModel';
 import { UserLoginResponse } from '@/@types/users';
 import { toast } from 'sonner';
+import { setSessionData } from '@/actions';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -37,7 +38,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } else if (response.message === 'Não foi possível fazer o login') {
       toast.error('Não foi possível fazer o login');
     } else {
-      localStorage.setItem('user', JSON.stringify({ ...response.user, token: response.token }));
+      setSessionData(response);
 
       router.push('/');
     }
