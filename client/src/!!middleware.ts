@@ -1,3 +1,5 @@
+'use client';
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { isLogged } from './lib/utils'
@@ -12,6 +14,8 @@ export function middleware(request: NextRequest) {
   // if (isLogged() && request.nextUrl.pathname === '/login') {
   //   return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/`)
   // }
+
+  console.log('middleware', isLogged())
 
   return NextResponse.next()
 }

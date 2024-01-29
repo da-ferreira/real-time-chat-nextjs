@@ -37,6 +37,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } else if (response.message === 'Não foi possível fazer o login') {
       toast.error('Não foi possível fazer o login');
     } else {
+      localStorage.setItem('user', JSON.stringify({ ...response.user, token: response.token }));
+
       router.push('/');
     }
   }

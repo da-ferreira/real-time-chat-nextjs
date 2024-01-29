@@ -22,7 +22,6 @@ export function Sidebar({ className, contacts }: SidebarProps) {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
       setIsChatOpen(!!currentChat);
-      console.log(currentChat);
     };
 
     handleResize();
