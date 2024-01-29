@@ -11,10 +11,10 @@ export default {
     });
   },
 
-  async findByField(field, value) {
+  async findByField(field, value, select = null) {
     return prisma.user.findUnique({
       where: { [field]: value },
-      select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },
+      select: select ? select : { id: true, name: true, email: true, createdAt: true, updatedAt: true },
     });
   },
 

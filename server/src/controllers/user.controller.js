@@ -38,7 +38,7 @@ export default {
     }
 
     try {
-      const user = await userModel.findByField('email', email);
+      const user = await userModel.findByField('email', email, { id: true, name: true, email: true, password: true });
 
       if (!user) {
         return res.status(400).json({ message: 'Email ou senha inválidos' });

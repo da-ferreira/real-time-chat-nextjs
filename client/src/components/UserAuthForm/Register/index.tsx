@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { registerUser } from '@/models/userModel';
-import { UserCreateResponse } from '@/@types/responses';
+import { UserCreateResponse } from '@/@types/users';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
