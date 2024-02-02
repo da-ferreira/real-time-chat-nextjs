@@ -22,11 +22,13 @@ export default {
     return bcrypt.compareSync(password, hash);
   },
 
-  async findAll(email, name) {
+  async findAll(search) {
     return prisma.user.findMany({
       where: {
-        email: { contains: email || '' },
-        name: { contains: name || '' },
+        OR: [
+          { email: { contains: search || '' } },
+          { name: { contains: search || '' } },
+        ],
       },
       select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },
     });

@@ -26,7 +26,6 @@ export default {
 
       return res.status(201).json({ token, user: { name, email }, message: 'Usuário criado com sucesso' });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ message: 'Não foi possível criar o usuário' });
     }
   },
@@ -76,10 +75,10 @@ export default {
   },
 
   async findAll(req, res) {
-    const { email, name } = req.query;
+    const { search } = req.query;
 
     try {
-      const users = await userModel.findAll(email, name);
+      const users = await userModel.findAll(search);
 
       return res.status(200).json(users);
     } catch (error) {
