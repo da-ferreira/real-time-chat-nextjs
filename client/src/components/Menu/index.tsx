@@ -26,6 +26,7 @@ import React from 'react';
 import { Contact } from '@/data/contacts';
 import { useRouter } from 'next/navigation';
 import { removeSessionData } from '@/actions';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const users = [
   {
@@ -58,6 +59,7 @@ const users = [
 export function Menu() {
   const [open, setOpen] = React.useState(false);
   const [selectedUser, setSelectedUsers] = React.useState<Contact>();
+  const { user } = React.useContext(AuthContext);
   const router = useRouter();
 
   const handleLogout = () => {
@@ -74,11 +76,11 @@ export function Menu() {
             <div className="flex flex-row items-center">
               <div className="flex items-center space-x-4">
                 <Avatar>
-                  <AvatarImage src="/avatars/02.png" alt="Image" />
-                  <AvatarFallback>OM</AvatarFallback>
+                  <AvatarImage src={`/avatars/${user?.user.avatar}` || '/avatars/01.png'} alt="Image" />
+                  <AvatarFallback>UD</AvatarFallback>
                 </Avatar>
                 <div className="text-left">
-                  <p className="text-sm font-medium leading-none line-clamp-2">David Ferreira</p>
+                  <p className="text-sm font-medium leading-none line-clamp-2">{user?.user.name}</p>
                 </div>
               </div>
             </div>

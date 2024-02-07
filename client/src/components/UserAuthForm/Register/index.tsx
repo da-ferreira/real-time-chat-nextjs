@@ -11,6 +11,8 @@ import { registerUser } from '@/models/userModel';
 import { UserCreateResponse } from '@/@types/users';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -21,6 +23,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const name = React.useRef<HTMLInputElement>(null);
   const email = React.useRef<HTMLInputElement>(null);
   const password = React.useRef<HTMLInputElement>(null);
+  const [defaultAvatar, setDefaultAvatar] = React.useState<string>('01.png');
+
+  const handleAvatarChange = (image: string) => {
+    setDefaultAvatar(image);
+  };
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -30,6 +37,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       name: name.current?.value,
       email: email.current?.value,
       password: password.current?.value,
+      avatar: defaultAvatar,
     });
 
     setIsLoading(false);
@@ -49,21 +57,42 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     <div className={cn('grid gap-6', className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="name">
-              Nome
-            </Label>
-            <Input
-              id="name"
-              ref={name}
-              placeholder="Nome"
-              type="text"
-              autoCapitalize="none"
-              autoComplete="name"
-              autoCorrect="off"
-              disabled={isLoading}
-              required
-            />
+          <div className="flex">
+            <div className="w-4/6 mr-2">
+              <Label className="sr-only" htmlFor="name">
+                Nome
+              </Label>
+              <Input
+                id="name"
+                ref={name}
+                placeholder="Nome"
+                type="text"
+                autoCapitalize="none"
+                autoComplete="name"
+                autoCorrect="off"
+                disabled={isLoading}
+                required
+              />
+            </div>
+            <div className="w-2/6">
+              <Select value={defaultAvatar} onValueChange={handleAvatarChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um avatar" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (
+                      <SelectItem key={i} value={`0${i}.png`}>
+                        <Avatar className="w-9 h-9">
+                          <AvatarImage src={`/avatars/0${i}.png`} alt="Image" />
+                          <AvatarFallback>V{i}</AvatarFallback>
+                        </Avatar>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">

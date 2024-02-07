@@ -4,7 +4,7 @@ import authToken from '../config/token';
 
 export default {
   async create(req, res) {
-    const { name, email, password } = req.body;
+    const { name, email, password, avatar } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Preencha todos os campos' });
@@ -21,7 +21,7 @@ export default {
         return res.status(400).json({ message: 'Esse email já está em uso' });
       }
 
-      const user = await userModel.create(name, email, password);
+      const user = await userModel.create(name, email, password, avatar);
       const token = authToken.generateToken(user.id);
 
       return res.status(201).json({ token, user: { name, email }, message: 'Usuário criado com sucesso' });
@@ -38,7 +38,7 @@ export default {
     }
 
     try {
-      const user = await userModel.findByField('email', email, { id: true, name: true, email: true, password: true });
+      const user = await userModel.findByField('email', email, { id: true, name: true, email: true, password: true, avatar: true });
 
       if (!user) {
         return res.status(400).json({ message: 'Email ou senha inválidos' });
@@ -52,7 +52,7 @@ export default {
 
       const token = authToken.generateToken(user.id);
 
-      return res.status(200).json({ token, user: { name: user.name, email } });
+      return res.status(200).json({ token, user: { name: user.name, email, avatar: user.avatar } });
     } catch (error) {
       return res.status(500).json({ message: 'Não foi possível fazer o login' });
     }

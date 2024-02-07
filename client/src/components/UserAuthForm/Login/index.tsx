@@ -12,11 +12,13 @@ import { loginUser } from '@/models/userModel';
 import { UserLoginResponse } from '@/@types/users';
 import { toast } from 'sonner';
 import { setSessionData } from '@/actions';
+import { AuthContext } from '@/contexts/AuthContext';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const { setUser } = React.useContext(AuthContext);
   const router = useRouter();
 
   const email = React.useRef<HTMLInputElement>(null);
@@ -40,6 +42,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } else {
       setSessionData(response).then(() => {
         router.push('/');
+        setUser(response);
       });
     }
   }

@@ -4,28 +4,35 @@ import { UserLoginResponse } from '@/@types/users';
 import { getSessionData } from '@/actions';
 import { createContext, useEffect, useState } from 'react';
 
-export const AuthContext = createContext({});
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+interface AuthContextProps {
+  user: UserLoginResponse | null;
+  setUser: React.Dispatch<React.SetStateAction<UserLoginResponse | null>>;
+  currentChat: any;
+  setCurrentChat: React.Dispatch<React.SetStateAction<any>>;
+}
+
+export const AuthContext = createContext<AuthContextProps>({
+  user: null,
+  setUser: () => {},
+  currentChat: null,
+  setCurrentChat: () => {},
+});
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserLoginResponse | null>(null);
   const [currentChat, setCurrentChat] = useState(null);
 
-  // useEffect(() => {
-  //   getSessionData().then((response) => {
-  //     if (response) {
-  //       setUser(response);
-  //     }
-  //     console.log(response);
-      
-  //   });
-  // }, [user]);
+  const setSesionData = async () => {
+    setUser(await getSessionData());
+  };
 
-  // getSessionData().then((response) => {
-  //   if (response) {
-  //     setUser(response);
-  //     console.log(response);
-  //   }
-  // });
+  useEffect(() => {
+    setSesionData();
+  }, []);
 
   return <AuthContext.Provider value={{ user, setUser, currentChat, setCurrentChat }}>{children}</AuthContext.Provider>;
 }

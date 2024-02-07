@@ -2,6 +2,7 @@ export interface UserCreate {
   name: string | undefined;
   email: string | undefined;
   password: string | undefined;
+  avatar: string | undefined;
 }
 
 export interface UserLogin {
@@ -14,6 +15,7 @@ export interface UserCreateResponse {
   user: {
     name: string;
     email: string;
+    avatar: string;
   };
   message: string;
 }
