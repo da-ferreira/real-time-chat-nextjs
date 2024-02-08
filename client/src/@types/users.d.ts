@@ -16,6 +16,7 @@ export interface UserCreateResponse {
     name: string;
     email: string;
     avatar: string;
+    id: string;
   };
   message: string;
 }

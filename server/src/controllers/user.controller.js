@@ -52,7 +52,7 @@ export default {
 
       const token = authToken.generateToken(user.id);
 
-      return res.status(200).json({ token, user: { name: user.name, email, avatar: user.avatar } });
+      return res.status(200).json({ token, user: { name: user.name, email, avatar: user.avatar, id: user.id } });
     } catch (error) {
       return res.status(500).json({ message: 'Não foi possível fazer o login' });
     }
