@@ -22,3 +22,16 @@ export interface UserCreateResponse {
 }
 
 export interface UserLoginResponse extends UserCreateResponse { }
+
+export interface UserChat {
+  id: string;
+  user1Id: string;
+  user2Id: string;
+  user1Avatar: string;
+  user2Avatar: string;
+  user1Name: string;
+  user2Name: string;
+  lastMessage: string;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -23,7 +23,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import React from 'react';
-import { Contact } from '@/data/contacts';
 import { useRouter } from 'next/navigation';
 import { removeSessionData } from '@/actions';
 import { AuthContext } from '@/contexts/AuthContext';
@@ -58,7 +57,7 @@ const users = [
 
 export function Menu() {
   const [open, setOpen] = React.useState(false);
-  const [selectedUser, setSelectedUsers] = React.useState<Contact>();
+  const [selectedUser, setSelectedUsers] = React.useState();
   const { user } = React.useContext(AuthContext);
   const router = useRouter();
 

@@ -27,6 +27,7 @@ export default {
 
       return res.status(200).json(chats);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ message: 'Não foi possível buscar os chats do usuário' });
     }
   },

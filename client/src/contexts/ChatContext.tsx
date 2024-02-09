@@ -3,16 +3,17 @@
 import { listUserChats } from '@/models/chatModel';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { AuthContext } from './AuthContext';
+import { UserChat } from '@/@types/users';
 
 interface ChatProviderProps {
   children: ReactNode;
 }
 
 interface ChatContextProps {
-  userChats: any;
+  userChats: UserChat[];
   setUserChats: React.Dispatch<React.SetStateAction<any>>;
   isUserChatsLoading: boolean;
-  isUserChatsError: any;
+  isUserChatsError: null | string;
 }
 
 export const ChatContext = createContext<ChatContextProps>({
@@ -36,7 +37,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
         const response = await listUserChats(user?.user.id);
 
-        console.log(response);
+        console.log(response); // REMOVER
 
         setUserChats(response);
       } catch (error: any) {

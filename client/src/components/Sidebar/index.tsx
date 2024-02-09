@@ -3,20 +3,45 @@
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Menu } from '@/components/Menu';
-import { Contact } from '@/data/contacts';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import React, { HTMLAttributes, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
+import { ChatContext } from '@/contexts/ChatContext';
+import { UserChat } from '@/@types/users';
+import { SkeletonDemo } from '../ui/skeleton-demo';
 
-interface SidebarProps extends HTMLAttributes<HTMLDivElement> {
-  contacts: Contact[];
-}
+interface SidebarProps extends HTMLAttributes<HTMLDivElement> {}
 
-export function Sidebar({ className, contacts }: SidebarProps) {
+export function Sidebar({ className }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
-  const { setCurrentChat, currentChat } = useContext(AuthContext);
+  const { setCurrentChat, currentChat, user } = useContext(AuthContext);
   const [isChatOpen, setIsChatOpen] = useState(!!currentChat);
+  const { userChats, isUserChatsLoading } = useContext(ChatContext);
+
+  const handleChatAvatar = (chat: UserChat) => {
+    if (chat.user1Id === user?.user.id) {
+      return `/avatars/${chat.user2Avatar}`;
+    }
+
+    return `/avatars/${chat.user1Avatar}`;
+  };
+
+  const handleChatName = (chat: UserChat) => {
+    if (chat.user1Id === user?.user.id) {
+      return chat.user2Name;
+    }
+
+    return chat.user1Name;
+  };
+
+  const handleChatFallback = (chat: UserChat) => {
+    if (chat.user1Id === user?.user.id) {
+      return chat.user2Name.charAt(0);
+    }
+
+    return chat.user1Name.charAt(0);
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,27 +67,31 @@ export function Sidebar({ className, contacts }: SidebarProps) {
         </div>
 
         <ScrollArea className="h-full !mt-2 !block">
-          <div className="space-y-1">
-            {contacts?.map((contact, i) => (
-              <button key={`${contact}-${i}`} onClick={() => setCurrentChat(contact)} className="w-full">
-                <div
-                  key={`${contact}-${i}`}
-                  className="w-full justify-start font-normal flex flex-row items-center h-14 border-b border-gray-200 rounded-none p-4 hover:bg-gray-100 cursor-pointer"
-                >
-                  <div className="flex items-center space-x-4 w-full">
-                    <Avatar>
-                      <AvatarImage src={contact.avatar} alt="Image" />
-                      <AvatarFallback>OM</AvatarFallback>
-                    </Avatar>
-                    <div className="w-full text-start line-clamp-2">
-                      <p className="text-sm font-medium">{contact.name}</p>
-                      <p className="text-sm text-muted-foreground">{contact.lastMessage}</p>
+          {isUserChatsLoading ? (
+            <SkeletonDemo />
+          ) : (
+            <div className="space-y-1">
+              {userChats?.map((chat, i) => (
+                <button key={`${chat.id}-${i}`} onClick={() => setCurrentChat(chat)} className="w-full">
+                  <div
+                    key={`${chat}-${i}`}
+                    className="w-full justify-start font-normal flex flex-row items-center h-14 border-b border-gray-200 rounded-none p-4 hover:bg-gray-100 cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-4 w-full">
+                      <Avatar>
+                        <AvatarImage src={handleChatAvatar(chat)} alt="Image" />
+                        <AvatarFallback>{handleChatFallback(chat)}</AvatarFallback>
+                      </Avatar>
+                      <div className="w-full text-start line-clamp-2">
+                        <p className="text-sm font-medium">{handleChatName(chat)}</p>
+                        <p className="text-sm text-muted-foreground">{chat.lastMessage}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </button>
-            ))}
-          </div>
+                </button>
+              ))}
+            </div>
+          )}
         </ScrollArea>
       </div>
     </div>
