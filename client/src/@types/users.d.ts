@@ -35,3 +35,12 @@ export interface UserChat {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface UserSearch {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  createdAt: string;
+  updatedAt: string;
+}

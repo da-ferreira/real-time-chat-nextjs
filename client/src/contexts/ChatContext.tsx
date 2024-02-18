@@ -37,8 +37,6 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
         const response = await listUserChats(user?.user.id);
 
-        console.log(response); // REMOVER
-
         setUserChats(response);
       } catch (error: any) {
         setIsUserChatsError(error);

@@ -27,3 +27,16 @@ export const loginUser = async (user: UserLogin) => {
     return { message: 'Não foi possível fazer o login', error };
   }
 };
+
+export const searchUsers = async (query: string) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users?search=${query}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    return response.json();
+  } catch (error) {
+    return { message: 'Erro ao buscar usuários', error };
+  }
+};

@@ -30,7 +30,7 @@ export default {
           { name: { contains: search || '' } },
         ],
       },
-      select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, avatar: true, createdAt: true, updatedAt: true },
     });
   },
 };

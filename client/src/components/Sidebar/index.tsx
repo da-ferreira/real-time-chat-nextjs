@@ -69,7 +69,7 @@ export function Sidebar({ className }: SidebarProps) {
         <ScrollArea className="h-full !mt-2 !block">
           {isUserChatsLoading ? (
             <SkeletonDemo />
-          ) : (
+          ) : userChats?.length ? (
             <div className="space-y-1">
               {userChats?.map((chat, i) => (
                 <button key={`${chat.id}-${i}`} onClick={() => setCurrentChat(chat)} className="w-full">
@@ -90,6 +90,12 @@ export function Sidebar({ className }: SidebarProps) {
                   </div>
                 </button>
               ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center w-full h-full p-4 text-center">
+              <p className="text-muted-foreground font-normal text-sm">
+                Clique no botão de mais ao lado do seu avatar para começar uma nova conversa.
+              </p>
             </div>
           )}
         </ScrollArea>

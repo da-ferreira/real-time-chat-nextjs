@@ -9,7 +9,6 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from '@/components/ui/menubar';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import {
   Dialog,
   DialogContent,
@@ -26,45 +25,36 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { removeSessionData } from '@/actions';
 import { AuthContext } from '@/contexts/AuthContext';
-
-const users = [
-  {
-    name: 'Olivia Martin',
-    email: 'm@example.com',
-    avatar: '/avatars/01.png',
-  },
-  {
-    name: 'Isabella Nguyen',
-    email: 'isabella.nguyen@email.com',
-    avatar: '/avatars/03.png',
-  },
-  {
-    name: 'Emma Wilson',
-    email: 'emma@example.com',
-    avatar: '/avatars/05.png',
-  },
-  {
-    name: 'Jackson Lee',
-    email: 'lee@example.com',
-    avatar: '/avatars/02.png',
-  },
-  {
-    name: 'William Kim',
-    email: 'will@email.com',
-    avatar: '/avatars/04.png',
-  },
-] as const;
+import { UserSearch } from '@/@types/users';
+import { searchUsers } from '@/models/userModel';
 
 export function Menu() {
   const [open, setOpen] = React.useState(false);
-  const [selectedUser, setSelectedUsers] = React.useState();
+  const [selectedUser, setSelectedUser] = React.useState<UserSearch>();
+  const [users, setUsers] = React.useState<UserSearch[]>([]);
   const { user } = React.useContext(AuthContext);
   const router = useRouter();
+  const search = React.useRef<HTMLInputElement>(null);
 
   const handleLogout = () => {
     removeSessionData().then(() => {
       router.push('/login');
     });
+  };
+
+  const handleSearchUsers = async () => {
+    const q = String(search.current?.value).trim();
+
+    if (q.length < 3) return;
+
+    const response = await searchUsers(q);
+
+    setUsers(response);
+  };
+
+  const createChat = () => {
+    setOpen(false);
+    setSelectedUser(undefined);
   };
 
   return (
@@ -106,7 +96,7 @@ export function Menu() {
                 className="rounded-full !-ml-6"
                 onClick={() => {
                   setOpen(true);
-                  setSelectedUsers(undefined);
+                  setSelectedUser(undefined);
                 }}
               >
                 <Plus className="h-4 w-4" />
@@ -124,56 +114,57 @@ export function Menu() {
             <DialogTitle>Nova mensagem</DialogTitle>
             <DialogDescription>Inicie uma conversa com seus amigos</DialogDescription>
           </DialogHeader>
-          <Command className="overflow-hidden rounded-t-none border-t">
-            <CommandInput placeholder="Buscar por nome ou email" />
-            <CommandList>
-              <CommandEmpty>No users found.</CommandEmpty>
-              <CommandGroup className="p-2">
+          <div className="overflow-hidden rounded-t-none border-t flex h-full w-full flex-col rounded-md bg-popover text-popover-foreground">
+            <input
+              placeholder="Buscar por nome ou email"
+              ref={search}
+              onKeyUp={handleSearchUsers}
+              className="px-4 flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            />
+            <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+              <div>
                 {users.map((user) => (
-                  <CommandItem
+                  <button
                     key={user.email}
-                    className="flex items-center px-2"
-                    onSelect={() => {
+                    className="w-full text-left flex items-center px-2 relative cursor-default select-none rounded-sm py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+                    onClick={() => {
                       if (selectedUser === user) {
-                        setSelectedUsers(undefined);
+                        setSelectedUser(undefined);
                       } else {
-                        setSelectedUsers(user);
+                        setSelectedUser(user);
                       }
                     }}
                   >
                     <Avatar>
-                      <AvatarImage src={user.avatar} alt="Image" />
+                      <AvatarImage src={`/avatars/${user.avatar}`} alt="Image" />
                       <AvatarFallback>{user.name[0]}</AvatarFallback>
                     </Avatar>
                     <div className="ml-2">
                       <p className="text-sm font-medium leading-none">{user.name}</p>
                       <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
-                    {/* {selectedUsers.includes(user) ? <Check className="ml-auto flex h-5 w-5 text-primary" /> : null} */}
                     {selectedUser === user ? <Check className="ml-auto flex h-5 w-5 text-primary" /> : null}
-                  </CommandItem>
+                  </button>
                 ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
+              </div>
+            </div>
+          </div>
           <DialogFooter className="flex items-center border-t p-4 sm:justify-between">
             {!!selectedUser ? (
-              <div className="flex -space-x-2 overflow-hidden">
+              <div className="flex -space-x-2 overflow-hidde items-center">
                 <Avatar key={selectedUser.email} className="inline-block border-2 border-background">
-                  <AvatarImage src={selectedUser.avatar} />
+                  <AvatarImage src={`/avatars/${selectedUser.avatar}`} />
                   <AvatarFallback>{selectedUser.name[0]}</AvatarFallback>
                 </Avatar>
+
+                <div className="flex flex-col !ml-2">
+                  <p className="text-sm font-medium">{selectedUser.name}</p>
+                </div>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">Selecione um contato para iniciar uma conversa</p>
             )}
-            <Button
-              disabled={!selectedUser}
-              onClick={() => {
-                setOpen(false);
-                setSelectedUsers(undefined);
-              }}
-            >
+            <Button disabled={!selectedUser} onClick={createChat}>
               Iniciar conversa
             </Button>
           </DialogFooter>
