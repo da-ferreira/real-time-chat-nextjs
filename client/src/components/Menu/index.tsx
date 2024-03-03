@@ -19,22 +19,25 @@ import {
 } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Plus, Check } from 'lucide-react';
+import { Plus, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { removeSessionData } from '@/actions';
 import { AuthContext } from '@/contexts/AuthContext';
-import { UserSearch } from '@/@types/users';
+import { UserChatMessageApi, UserSearch } from '@/@types/users';
 import { searchUsers } from '@/models/userModel';
+import { createOrGetChat } from '@/models/chatModel';
+import { listMessageFromChat } from '@/models/messageModel';
 
 export function Menu() {
   const [open, setOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserSearch>();
   const [users, setUsers] = React.useState<UserSearch[]>([]);
-  const { user } = React.useContext(AuthContext);
+  const { user, setCurrentChat, setCurrentMessages } = React.useContext(AuthContext);
   const router = useRouter();
   const search = React.useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = React.useState(false);
 
   const handleLogout = () => {
     removeSessionData().then(() => {
@@ -52,7 +55,26 @@ export function Menu() {
     setUsers(response);
   };
 
-  const createChat = () => {
+  const createChat = async () => {
+    setLoading(true);
+    const response = await createOrGetChat(String(user?.user.id), String(selectedUser?.id));
+
+    if (response.error) {
+      console.error(response.error);
+      return;
+    }
+
+    const messages = await listMessageFromChat(response[0].id);
+
+    setCurrentMessages(
+      messages.map((message: UserChatMessageApi) => ({
+        role: message.userId === user?.user.id ? 'user' : 'agent',
+        content: message.message,
+        createdAt: message.createdAt,
+      }))
+    );
+    setCurrentChat(response[0]);
+    setLoading(false);
     setOpen(false);
     setSelectedUser(undefined);
   };
@@ -100,10 +122,10 @@ export function Menu() {
                 }}
               >
                 <Plus className="h-4 w-4" />
-                <span className="sr-only">Nova mensagem</span>
+                <span className="sr-only">Nova conversa</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent sideOffset={10}>Nova mensagem</TooltipContent>
+            <TooltipContent sideOffset={10}>Nova conversa</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </Menubar>
@@ -111,7 +133,7 @@ export function Menu() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="gap-0 p-0 outline-none">
           <DialogHeader className="px-4 pb-4 pt-5">
-            <DialogTitle>Nova mensagem</DialogTitle>
+            <DialogTitle>Nova conversa</DialogTitle>
             <DialogDescription>Inicie uma conversa com seus amigos</DialogDescription>
           </DialogHeader>
           <div className="overflow-hidden rounded-t-none border-t flex h-full w-full flex-col rounded-md bg-popover text-popover-foreground">
@@ -165,7 +187,16 @@ export function Menu() {
               <p className="text-sm text-muted-foreground">Selecione um contato para iniciar uma conversa</p>
             )}
             <Button disabled={!selectedUser} onClick={createChat}>
-              Iniciar conversa
+              {/* {loading ? 'Carregando...' : 'Iniciar conversa'} */}
+              {/* <Loader2 className="mr-2 h-4 w-4 animate-spin"  /> */}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Carregando...
+                </>
+              ) : (
+                'Iniciar conversa'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

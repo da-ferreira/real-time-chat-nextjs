@@ -23,6 +23,21 @@ export interface UserCreateResponse {
 
 export interface UserLoginResponse extends UserCreateResponse { }
 
+export interface UserChatMessageApi {
+  id: string;
+  chatId: string;
+  userId: string;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserMessageFront {
+  role: string;
+  content: string;
+  createdAt: string;
+}
+
 export interface UserChat {
   id: string;
   user1Id: string;
@@ -34,6 +49,7 @@ export interface UserChat {
   lastMessage: string;
   createdAt: string;
   updatedAt: string;
+  messages: UserMessageFront[];
 }
 
 export interface UserSearch {

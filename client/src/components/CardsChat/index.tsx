@@ -10,112 +10,68 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Link from 'next/link';
 import { AuthContext } from '@/contexts/AuthContext';
+import { UserChat } from '@/@types/users';
+import { sendMessageToChat } from '@/models/messageModel';
 
 export function CardsChat() {
-  const [messages, setMessages] = React.useState([
-    {
-      role: 'agent',
-      content: 'Hi, how can I help you today?',
-    },
-    {
-      role: 'user',
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
-      role: 'agent',
-      content: 'What seems to be the problem?',
-    },
-    {
-      role: 'user',
-      content: "I can't log in.",
-    },
-    {
-      role: 'agent',
-      content: 'Hi, how can I help you today?',
-    },
-    {
-      role: 'user',
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
-      role: 'agent',
-      content: 'What seems to be the problem?',
-    },
-    {
-      role: 'user',
-      content: "I can't log in.",
-    },
-    {
-      role: 'agent',
-      content: 'Hi, how can I help you today?',
-    },
-    {
-      role: 'user',
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
-      role: 'agent',
-      content: 'What seems to be the problem?',
-    },
-    {
-      role: 'user',
-      content: "I can't log in.",
-    },
-    {
-      role: 'agent',
-      content: 'Hi, how can I help you today?',
-    },
-    {
-      role: 'user',
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
-      role: 'agent',
-      content: 'What seems to be the problem?',
-    },
-    {
-      role: 'user',
-      content: "I can't log in.",
-    },
-    {
-      role: 'agent',
-      content: 'Hi, how can I help you today?',
-    },
-    {
-      role: 'user',
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
-      role: 'agent',
-      content: 'What seems to be the problem?',
-    },
-    {
-      role: 'user',
-      content: "I can't log in.",
-    },
-    {
-      role: 'agent',
-      content: 'Hi, how can I help you today?',
-    },
-    {
-      role: 'user',
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
-      role: 'agent',
-      content: 'What seems to be the problem?',
-    },
-    {
-      role: 'user',
-      content: "I can't log in.",
-    },
-  ]);
   const [input, setInput] = React.useState('');
   const inputLength = input.trim().length;
   const [isMobile, setIsMobile] = React.useState(false);
-  const { setCurrentChat } = React.useContext(AuthContext);
+  const { setCurrentChat, currentChat, user, currentMessages, setCurrentMessages } = React.useContext(AuthContext);
+  const [loading, setLoading] = React.useState(false);
+
+  const handleChatAvatar = (chat: UserChat | null) => {
+    if (!chat) return '/avatars/01.png';
+
+    if (chat.user1Id === user?.user.id) {
+      return `/avatars/${chat.user2Avatar}`;
+    }
+
+    return `/avatars/${chat.user1Avatar}`;
+  };
+
+  const handleChatName = (chat: UserChat | null) => {
+    if (!chat) return 'Chat';
+
+    if (chat.user1Id === user?.user.id) {
+      return chat.user2Name;
+    }
+
+    return chat.user1Name;
+  };
+
+  const handleChatFallback = (chat: UserChat | null) => {
+    if (!chat) return 'C';
+
+    console.log(chat, 'chat aqqqq');
+
+    if (chat.user1Id === user?.user.id) {
+      return chat.user2Name.charAt(0);
+    }
+
+    return chat.user1Name.charAt(0);
+  };
+
+  const sendMessage = async (message: string) => {
+    setLoading(true);
+    const response = await sendMessageToChat(String(currentChat?.id), String(user?.user.id), message);
+    setLoading(false);
+
+    if (response.error) {
+      console.error(response.error);
+      return;
+    }
+
+    setCurrentMessages([
+      ...currentMessages,
+      {
+        role: 'user',
+        content: message,
+        createdAt: new Date().toISOString(),
+      },
+    ]);
+  };
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -137,18 +93,17 @@ export function CardsChat() {
         <CardHeader className="flex flex-row items-center">
           <div className="flex items-center space-x-4">
             {isMobile && (
-              <button onClick={() => setCurrentChat(null)} >
+              <button onClick={() => setCurrentChat(null)}>
                 <ChevronLeft className="h-6 w-6" />
               </button>
             )}
 
             <Avatar>
-              <AvatarImage src="/avatars/01.png" alt="Image" />
-              <AvatarFallback>OM</AvatarFallback>
+              <AvatarImage src={handleChatAvatar(currentChat)} alt="Image" />
+              <AvatarFallback>{handleChatFallback(currentChat)}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium leading-none">Sofia Davis</p>
-              <p className="text-sm text-muted-foreground">m@example.com</p>
+              <p className="text-sm font-medium leading-none">{handleChatName(currentChat)}</p>
             </div>
           </div>
         </CardHeader>
@@ -156,7 +111,7 @@ export function CardsChat() {
           <div className="h-[calc(100vh-13rem)]">
             <ScrollArea className="h-full pr-6">
               <div className="space-y-4">
-                {messages.map((message, index) => (
+                {currentMessages.map((message, index) => (
                   <div
                     key={index}
                     className={cn(
@@ -164,7 +119,17 @@ export function CardsChat() {
                       message.role === 'user' ? 'ml-auto bg-primary text-primary-foreground' : 'bg-muted'
                     )}
                   >
-                    {message.content}
+                    <div className="flex items-center space-x-2">
+                      <span>{message.content}</span>
+                      <span
+                        className={cn(
+                          message.role === 'user' ? 'text-primary-foreground' : 'text-muted-foreground'
+                        )}
+                        style={{ fontSize: '0.7rem' }}
+                      >
+                        {new Date(message.createdAt).toLocaleTimeString().slice(0, 5)}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -176,23 +141,18 @@ export function CardsChat() {
             onSubmit={(event) => {
               event.preventDefault();
               if (inputLength === 0) return;
-              setMessages([
-                ...messages,
-                {
-                  role: 'user',
-                  content: input,
-                },
-              ]);
+              sendMessage(input);
               setInput('');
             }}
             className="flex w-full items-center space-x-2"
           >
             <Input
               id="message"
-              placeholder="Type your message..."
+              placeholder="Escreva uma mensagem..."
               className="flex-1"
               autoComplete="off"
               value={input}
+              disabled={loading}
               onChange={(event) => setInput(event.target.value)}
             />
             <Button type="submit" size="icon" disabled={inputLength === 0}>

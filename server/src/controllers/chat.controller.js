@@ -7,7 +7,8 @@ export default {
     try {
       const chat = await chatModel.find(user1Id, user2Id);
 
-      if (chat) {
+      if (chat.length > 0) {
+        console.log('chat', chat);
         return res.status(200).json(chat);
       }
 

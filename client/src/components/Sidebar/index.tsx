@@ -8,14 +8,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import React, { HTMLAttributes, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 import { ChatContext } from '@/contexts/ChatContext';
-import { UserChat } from '@/@types/users';
+import { UserChat, UserChatMessageApi } from '@/@types/users';
 import { SkeletonDemo } from '../ui/skeleton-demo';
+import { listMessageFromChat } from '@/models/messageModel';
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
-  const { setCurrentChat, currentChat, user } = useContext(AuthContext);
+  const { setCurrentChat, currentChat, user, setCurrentMessages } = useContext(AuthContext);
   const [isChatOpen, setIsChatOpen] = useState(!!currentChat);
   const { userChats, isUserChatsLoading } = useContext(ChatContext);
 
@@ -58,6 +59,19 @@ export function Sidebar({ className }: SidebarProps) {
     };
   }, [currentChat]);
 
+  const handleSetCurrentChat = async (chat: UserChat) => {
+    const messages = await listMessageFromChat(chat.id);
+
+    setCurrentChat(chat);
+    setCurrentMessages(
+      messages.map((message: UserChatMessageApi) => ({
+        role: message.userId === user?.user.id ? 'user' : 'agent',
+        content: message.message,
+        createdAt: message.createdAt,
+      }))
+    )
+  };
+
   return (
     <div className={cn(className, 'h-full', { hidden: isChatOpen && isMobile })}>
       <Menu />
@@ -72,7 +86,7 @@ export function Sidebar({ className }: SidebarProps) {
           ) : userChats?.length ? (
             <div className="space-y-1">
               {userChats?.map((chat, i) => (
-                <button key={`${chat.id}-${i}`} onClick={() => setCurrentChat(chat)} className="w-full">
+                <button key={`${chat.id}-${i}`} onClick={() => handleSetCurrentChat(chat)} className="w-full">
                   <div
                     key={`${chat}-${i}`}
                     className="w-full justify-start font-normal flex flex-row items-center h-14 border-b border-gray-200 rounded-none p-4 hover:bg-gray-100 cursor-pointer"

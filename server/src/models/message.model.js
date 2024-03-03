@@ -2,7 +2,7 @@ import { prisma } from '../config/prisma.client.js';
 
 export default {
   async findByChat(chatId) {
-    return prisma.message.findMany({ where: { chatId } });
+    return prisma.message.findMany({ where: { chatId }, orderBy: { createdAt: 'asc' } });
   },
 
   async create(chatId, userId, message) {
