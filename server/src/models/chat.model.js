@@ -1,12 +1,20 @@
 import { prisma } from '../config/prisma.client.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   async create(user1Id, user2Id) {
-    await prisma.chat.create({
-      data: { user1Id, user2Id, lastMessage: null },
-    });
+    // await prisma.chat.create({
+    //   data: { user1Id, user2Id, lastMessage: null },
+    // });
 
-    return this.find(user1Id, user2Id);
+    // return this.find(user1Id, user2Id);
+
+    const chat = await prisma.$queryRaw`
+      INSERT INTO chats (id, user1Id, user2Id, lastMessage) VALUES (${uuidv4()}, ${user1Id}, ${user2Id}, null)
+      RETURNING *
+    `;
+
+    return chat[0];
   },
 
   async find(user1Id, user2Id) {

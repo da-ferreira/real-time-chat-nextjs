@@ -9,6 +9,7 @@ export default {
 
       return res.status(200).json(messages);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ message: 'Não foi possível buscar as mensagens' });
     }
   },
@@ -18,9 +19,11 @@ export default {
 
     try {
       const newMessage = await messageModel.create(chatId, userId, message);
+      console.log(newMessage);
 
       return res.status(201).json(newMessage);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ message: 'Não foi possível criar a mensagem' });
     }
   },

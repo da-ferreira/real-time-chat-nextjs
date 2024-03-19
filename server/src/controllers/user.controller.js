@@ -38,7 +38,7 @@ export default {
     }
 
     try {
-      const user = await userModel.findByField('email', email, { id: true, name: true, email: true, password: true, avatar: true });
+      const user = await userModel.findByField('email', email);
 
       if (!user) {
         return res.status(400).json({ message: 'Email ou senha inválidos' });
@@ -54,6 +54,7 @@ export default {
 
       return res.status(200).json({ token, user: { name: user.name, email, avatar: user.avatar, id: user.id } });
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ message: 'Não foi possível fazer o login' });
     }
   },
