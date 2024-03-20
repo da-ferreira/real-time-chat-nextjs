@@ -64,7 +64,7 @@ export function Menu() {
       return;
     }
 
-    const messages = await listMessageFromChat(response[0].id);
+    const messages = await listMessageFromChat(response.id);
 
     setCurrentMessages(
       messages.map((message: UserChatMessageApi) => ({
@@ -73,7 +73,7 @@ export function Menu() {
         createdAt: message.createdAt,
       }))
     );
-    setCurrentChat(response[0]);
+    setCurrentChat(response);
     setLoading(false);
     setOpen(false);
     setSelectedUser(undefined);

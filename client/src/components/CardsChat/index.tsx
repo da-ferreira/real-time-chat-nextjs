@@ -21,6 +21,8 @@ export function CardsChat() {
   const { setCurrentChat, currentChat, user, currentMessages, setCurrentMessages } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(false);
 
+  console.log('currentChat', currentChat);
+
   const handleChatAvatar = (chat: UserChat | null) => {
     if (!chat) return '/avatars/01.png';
 
@@ -43,8 +45,6 @@ export function CardsChat() {
 
   const handleChatFallback = (chat: UserChat | null) => {
     if (!chat) return 'C';
-
-    console.log(chat, 'chat aqqqq');
 
     if (chat.user1Id === user?.user.id) {
       return chat.user2Name.charAt(0);

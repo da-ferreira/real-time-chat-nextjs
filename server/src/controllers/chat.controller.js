@@ -7,8 +7,7 @@ export default {
     try {
       const chat = await chatModel.find(user1Id, user2Id);
 
-      if (chat.length > 0) {
-        console.log('chat', chat);
+      if (chat) {
         return res.status(200).json(chat);
       }
 
@@ -16,6 +15,7 @@ export default {
 
       return res.status(201).json(newChat);
     } catch (error) {
+      console.log(error, 'error');
       return res.status(500).json({ message: 'Não foi possível criar o chat' });
     }
   },
@@ -28,7 +28,6 @@ export default {
 
       return res.status(200).json(chats);
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ message: 'Não foi possível buscar os chats do usuário' });
     }
   },
