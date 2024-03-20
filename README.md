@@ -1,1 +1,1 @@
-FlowChat - Chat em tempo real usando websocket
+NonStopTalk - Chat em tempo real usando websocket

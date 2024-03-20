@@ -6,8 +6,8 @@ import { buttonVariants } from '@/components/ui/button';
 import { UserAuthForm } from '@/components/UserAuthForm/Register';
 
 export const metadata: Metadata = {
-  title: 'Crie sua conta | Flow Chat',
-  description: 'Crie sua conta no Flow Chat e converse com seus amigos.',
+  title: 'Crie sua conta | NonStopTalk Chat',
+  description: 'Crie sua conta no NonStopTalk Chat e converse com seus amigos.',
 };
 
 export default function ResgiterPage() {
@@ -35,12 +35,12 @@ export default function ResgiterPage() {
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            Flow Chat
+            NonStopTalk Chat
           </div>
           <div className="relative z-20 mt-auto">
             <div className="space-y-2">
               <p className="text-lg">
-                Conecte-se instantaneamente, mergulhe no Flow Chat e transforme cada mensagem em uma experiência única.
+                Conecte-se instantaneamente, mergulhe no NonStopTalk Chat e transforme cada mensagem em uma experiência única.
               </p>
             </div>
           </div>

@@ -4,8 +4,8 @@ import { Icons } from '@/components/Icons';
 import { UserAuthForm } from '@/components/UserAuthForm/Login';
 
 export const metadata: Metadata = {
-  title: 'Login | Flow Chat',
-  description: 'Faça login no Flow Chat e converse com seus amigos.',
+  title: 'Login | NonStopTalk Chat',
+  description: 'Faça login no NonStopTalk Chat e converse com seus amigos.',
 };
 
 export default function LoginPage() {
