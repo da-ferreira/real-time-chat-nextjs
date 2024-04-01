@@ -13,12 +13,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { AuthContext } from '@/contexts/AuthContext';
 import { UserChat } from '@/@types/users';
 import { sendMessageToChat } from '@/models/messageModel';
+import { ChatContext } from '@/contexts/ChatContext';
 
 export function CardsChat() {
   const [input, setInput] = React.useState('');
   const inputLength = input.trim().length;
   const [isMobile, setIsMobile] = React.useState(false);
   const { setCurrentChat, currentChat, user, currentMessages, setCurrentMessages } = React.useContext(AuthContext);
+  const { socket } = React.useContext(ChatContext);
   const [loading, setLoading] = React.useState(false);
 
   console.log('currentChat', currentChat);
@@ -71,6 +73,8 @@ export function CardsChat() {
         createdAt: new Date().toISOString(),
       },
     ]);
+    
+    socket.emit('update chat', currentChat?.id, user?.user.id, currentChat?.user1Id === user?.user.id ? currentChat?.user2Id : currentChat?.user1Id);
   };
 
   React.useEffect(() => {
@@ -127,7 +131,7 @@ export function CardsChat() {
                         )}
                         style={{ fontSize: '0.7rem' }}
                       >
-                        {new Date(message.createdAt).toLocaleTimeString().slice(0, 5)}
+                        {new Date(message.createdAt).toLocaleString()}
                       </span>
                     </div>
                   </div>

@@ -75,12 +75,12 @@ export function Sidebar({ className }: SidebarProps) {
   return (
     <div className={cn(className, 'h-full', { hidden: isChatOpen && isMobile })}>
       <Menu />
-      <div className="space-y-2 py-2 h-[calc(100vh-6.6rem)] w-full shrink-0 md:sticky md:block ">
-        <div className="flex items-center px-3 w-full">
+      <div className="space-y-2 py-2 h-[calc(100vh-6.6rem)] w-full shrink-0 md:sticky md:block">
+        {/* <div className="flex items-center px-3 w-full">
           <Input placeholder="Filtrar chats..." />
-        </div>
+        </div> */}
 
-        <ScrollArea className="h-full !mt-2 !block">
+        <ScrollArea className="h-full !mt-2 !block border-t-[1px]">
           {isUserChatsLoading ? (
             <SkeletonDemo />
           ) : userChats?.length ? (
