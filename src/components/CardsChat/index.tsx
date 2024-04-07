@@ -23,6 +23,8 @@ export function CardsChat() {
   const { socket } = React.useContext(ChatContext);
   const [loading, setLoading] = React.useState(false);
 
+  let messageEnd: HTMLDivElement | null = null;
+
   const handleChatAvatar = (chat: UserChat | null) => {
     if (!chat) return '/avatars/01.png';
 
@@ -89,6 +91,10 @@ export function CardsChat() {
     };
   }, []);
 
+  React.useEffect(() => {
+    messageEnd.scrollIntoView({ behavior: 'smooth' });
+  });
+
   return (
     <>
       <Card className={cn('h-full flex-col', { 'border-none': isMobile })}>
@@ -135,6 +141,8 @@ export function CardsChat() {
                   </div>
                 ))}
               </div>
+
+              <div ref={(element) => { messageEnd = element; }}></div>
             </ScrollArea>
           </div>
         </CardContent>
