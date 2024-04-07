@@ -23,8 +23,6 @@ export function CardsChat() {
   const { socket } = React.useContext(ChatContext);
   const [loading, setLoading] = React.useState(false);
 
-  console.log('currentChat', currentChat);
-
   const handleChatAvatar = (chat: UserChat | null) => {
     if (!chat) return '/avatars/01.png';
 
@@ -113,7 +111,7 @@ export function CardsChat() {
         </CardHeader>
         <CardContent className="flex-1">
           <div className="h-[calc(100vh-13rem)]">
-            <ScrollArea className="h-full pr-6">
+            <ScrollArea className="h-full pr-6" >
               <div className="space-y-4">
                 {currentMessages.map((message, index) => (
                   <div

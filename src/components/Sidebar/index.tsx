@@ -11,6 +11,9 @@ import { ChatContext } from '@/contexts/ChatContext';
 import { UserChat, UserChatMessageApi } from '@/@types/users';
 import { SkeletonDemo } from '../ui/skeleton-demo';
 import { listMessageFromChat } from '@/models/messageModel';
+import { io } from 'socket.io-client';
+import { listUserChats } from '@/models/chatModel';
+
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -18,7 +21,7 @@ export function Sidebar({ className }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const { setCurrentChat, currentChat, user, setCurrentMessages } = useContext(AuthContext);
   const [isChatOpen, setIsChatOpen] = useState(!!currentChat);
-  const { userChats, isUserChatsLoading } = useContext(ChatContext);
+  const { userChats, isUserChatsLoading, socket, setUserChats } = useContext(ChatContext);
 
   const handleChatAvatar = (chat: UserChat) => {
     if (chat.user1Id === user?.user.id) {
@@ -71,6 +74,37 @@ export function Sidebar({ className }: SidebarProps) {
       }))
     )
   };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const updateMessages = async (chatId: string) => {
+      const messages = await listMessageFromChat(chatId);
+  
+      setCurrentMessages(
+        messages.map((message: UserChatMessageApi) => ({
+          role: message.userId === user?.user.id ? 'user' : 'agent',
+          content: message.message,
+          createdAt: message.createdAt,
+        }))
+      );
+    }
+
+    const updateUserChats = async () => {
+      const response = await listUserChats(user?.user.id);
+      setUserChats(response);
+    };
+
+    socket.on('update chat', (chatId: string, user1Id: string, user2Id: string) => {
+      if (currentChat?.id === chatId) {
+        updateMessages(chatId);
+      }
+
+      if (user1Id === user?.user.id || user2Id === user?.user.id) {
+        updateUserChats();
+      }
+    });
+  }, [socket, currentChat, setCurrentMessages, user?.user.id, setUserChats]);
 
   return (
     <div className={cn(className, 'h-full', { hidden: isChatOpen && isMobile })}>

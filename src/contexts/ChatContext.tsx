@@ -5,7 +5,6 @@ import { ReactNode, createContext, useContext, useEffect, useState } from 'react
 import { AuthContext } from './AuthContext';
 import { UserChat } from '@/@types/users';
 import { io } from 'socket.io-client';
-
 interface ChatProviderProps {
   children: ReactNode;
 }
